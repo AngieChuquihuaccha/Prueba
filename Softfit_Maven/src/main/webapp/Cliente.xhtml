@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"     
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>SOFTFIT</title>
+        <f:event listener="#{clienteC.listar()}" type="preRenderView" />
+    </h:head>
+    <h:body>
+        <!-- Menubar -->
+        <h:form>
+            <p:menubar>
+                <p:menuitem value="Vendedor" outcome="Vendedor" />
+                <p:menuitem value="Prendas" outcome="Prendas"/>
+                <p:menuitem value="Cliente" outcome="Cliente"/>
+                <p:menuitem value="Venta" outcome="Venta"/>
+                
+            </p:menubar>
+        </h:form>
+
+        <p:spacer height="0"/>  
+
+        <!-- Botón nuevo -->
+        <h:form>
+            <p:toolbar>
+                <p:toolbarGroup>
+                    <p:commandButton value="Nuevo" icon="pi pi-plus" 
+                                     update=":RegCli" oncomplete="PF('wdlgRegistro').show()"
+                                     styleClass="ui-button-success" style="margin-right: .5rem">
+                        <p:resetInput target=":RegCli"/>
+                    </p:commandButton>
+                </p:toolbarGroup>
+                <p:toolbarGroup>
+                    <center>
+                        <div>
+                            <p:commandButton value="Excel" icon="pi pi-file-excel" styleClass="p-mr-2 p-mb-2">
+                                <p:dataExporter type="xls" target=":frmTablaCat:tablaCli" fileName="ListaDelCliente_XLS" pageOnly="true" />
+                            </p:commandButton>     
+                        </div>
+                    </center>
+                </p:toolbarGroup>
+            </p:toolbar>
+        </h:form>
+
+
+        <center>    
+            <p:growl showDetail="true" id="messages" >
+                <p:autoUpdate/> 
+            </p:growl>
+
+
+            <!--        Formulario del Cliente    >-->   
+            <p:dialog header="Registrar Cliente" widgetVar="wdlgRegistro" id="dlgRegistro">
+                <h:form id="RegCli">                 
+                    <p:panelGrid columns="2" >
+                        <p:outputLabel value="Nombre" />                    
+                        <p:inputText value="#{clienteC.cliente.nombre}" required="true">
+                            <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                        </p:inputText>
+
+                        <p:outputLabel value="Apellidos" />
+                        <p:inputText value="#{clienteC.cliente.apellidos}" required="true">
+                            <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                        </p:inputText>
+
+                        <p:outputLabel value="DNI" />
+                        <p:inputText placeholder="Numérico de 8 dígitos" value="#{clienteC.cliente.dni}" required="true">
+                            <p:keyFilter regEx="/[0-8]/"/>
+                        </p:inputText>
+
+                        <p:outputLabel value="Correo" />
+                        <p:inputText value="#{clienteC.cliente.correo}" required="true">
+                            <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_@_@@_._ ]/"/>
+                        </p:inputText>
+
+                        <p:outputLabel value="Celular" />
+                        <p:inputText placeholder="Numérico de 9 dígitos" value="#{clienteC.cliente.celular}"  required="true" maxlength="9" >
+                            <p:keyFilter regEx="/[0-9]/" />
+                        </p:inputText>
+
+                        <p:outputLabel value="Domicilio" />
+                        <p:inputText value="#{clienteC.cliente.domicilio}" required="true">
+                        </p:inputText>
+
+                        <p:outputLabel value="Ubigeo" />
+                        <p:inputText value="#{clienteC.cliente.ubicacion}" required="true">
+                            <p:keyFilter regEx="/[0-9 ]/"/>
+                        </p:inputText>
+
+
+
+                        <p:commandButton id="btnRegistrar" value="Registrar" actionListener="#{clienteC.registrar()}"
+                                         update="RegCli :frmTablaCat:tablaCli"                                          
+                                         oncomplete="if(!args.validationFailed)PF('wdlgRegistro').hide();">
+                            <p:confirm header="Confirmación" message="¿Deseas Registar?" icon="ui-icon-alert"/>
+                            <p:resetInput target="RegCli"/>
+
+                        </p:commandButton>                 
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('wdlgRegistro').hide();" />
+                    </p:panelGrid>   
+                </h:form>
+            </p:dialog> 
+            <!--        Fin del Formulario Cliente    >-->
+
+
+
+            <p:spacer height="0"/>        
+
+            <!--        Listado de Categoria    >-->              
+            <h:form id="frmTablaCat">
+                <p:dataTable id="tablaCli" widgetVar="tblCliente" var="lista" value="#{clienteC.lstCliente}"
+                             rows="10"
+                             paginator="true" 
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                             rowsPerPageTemplate="5,10,15,20,30,40">   
+                    <f:facet name="header">
+                        <center><h2>Listado de Clientes</h2>
+                            <p:outputPanel>
+                                <h:outputText value="Buscar:"/>
+                                <h:inputText id="globalFilter" onkeyup="PF('tblCiente').filter()" style="width:200px;height: 30px"/>
+                            </p:outputPanel>
+                        </center>
+
+                    </f:facet>
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{lista.nombre}" />
+                    </p:column>
+                    <p:column headerText="Apellidos">
+                        <h:outputText value="#{lista.apellidos}" />
+                    </p:column>
+                    <p:column headerText="DNI">
+                        <h:outputText value="#{lista.dni}" />
+                    </p:column>
+                    <p:column headerText="Correo">
+                        <h:outputText value="#{lista.correo}" />
+                    </p:column>
+                    <p:column headerText="Celular">
+                        <h:outputText value="#{lista.celular}" />
+                    </p:column>
+                    <p:column headerText="Domicilio">  
+                        <h:outputText value="#{lista.domicilio}" />
+                    </p:column>
+                    <p:column headerText="Ubicacion">  
+                        <h:outputText value="#{lista.ubicacion}" />
+                    </p:column>
+
+                    <p:column style="width: 40px">
+                        <p:commandButton icon="pi pi-pencil"
+                                         oncomplete="PF('wdlgDatos').show();"
+                                         update=":frmModificar"
+                                         styleClass="edit-button rounded-button ui-button-success">
+                            <f:setPropertyActionListener value="#{lista}" target="#{clienteC.cliente}"/>
+                        </p:commandButton>
+                    </p:column>
+                    <p:column style="width: 40px">
+                        <p:commandButton styleClass="rounded-button ui-button-danger" icon="pi pi-trash" actionListener="#{clienteC.eliminar(lista)}" update="tablaCli" >
+                            <p:confirm header="Confirmación" message="¿Desea Eliminar?" icon="ui-icon-alert"/>
+                            <p:tooltip trackMouse="true"/>
+                        </p:commandButton>
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi-pi-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi-pi-close"/>
+                        </p:confirmDialog>
+                    </p:column>
+                    <f:facet name="footer">
+                        EN TOTAL HAY #{fn:length(clienteC.lstCliente)} REGISTROS.
+                    </f:facet>
+                </p:dataTable> 
+
+            </h:form>
+            <!--        Fin del Listado Cliente    >-->  
+
+
+            <!--        Dialogo de Cliente   >-->
+            <p:dialog header="Datos de la Cliente" widgetVar="wdlgDatos" id="dlgDatos">
+                <h:form id="frmModificar">
+                    <p:panelGrid columns="2" >
+                        <p:outputLabel value="Nombre" />
+                        <p:inputText value="#{clienteC.cliente.nombre}">
+                            <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                        </p:inputText>
+
+                        <p:outputLabel value="Apellidos" />
+                        <p:inputText value="#{clienteC.cliente.apellidos}">
+                            <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                        </p:inputText>
+
+                        <p:outputLabel value="DNI" />
+                        <p:inputText placeholder="Numérico de 8 dígitos" value="#{clienteC.cliente.dni}" required="true">
+                            <p:keyFilter regEx="/[0-8]/"/>
+                        </p:inputText>
+
+                        <p:outputLabel value="Correo" />
+                        <p:inputText value="#{clienteC.cliente.correo}" required="true">
+                            <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_@_@@_._ ]/"/>
+                        </p:inputText>
+
+                        <p:outputLabel value="Celular" />
+                        <p:inputText placeholder="Numérico de 9 dígitos" value="#{clienteC.cliente.celular}"  required="true" maxlength="9" >
+                            <p:keyFilter regEx="/[0-9]/" />
+                        </p:inputText>
+
+                        <p:outputLabel value="Domicilio" />
+                        <p:inputText value="#{clienteC.cliente.domicilio}" required="true">
+                            <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                        </p:inputText>
+
+                        <p:outputLabel value="Ubicacion" />
+                        <p:inputText value="#{clienteC.cliente.ubicacion}" required="true">
+                            <p:keyFilter regEx="/[0-9]/"/>
+                        </p:inputText>
+
+
+                        <p:commandButton id="btnModificar" value="Modificar" actionListener="#{clienteC.modificar()}" 
+                                         update="frmModificar :frmTablaCat:tablaCli" 
+                                         oncomplete="if(!args.validationFailed)PF('wdlgDatos').hide();">
+                            <p:confirm header="Confirmación" message="¿Deseas Modificar?" icon="ui-icon-alert"/>
+                        </p:commandButton>  
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('wdlgDatos').hide();" />
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+                        </p:confirmDialog>
+                    </p:panelGrid> 
+                </h:form>
+
+            </p:dialog>
+            <!--        Fin del Dialogo de Categoria    >-->
+
+        </center>
+    </h:body>
+</html>

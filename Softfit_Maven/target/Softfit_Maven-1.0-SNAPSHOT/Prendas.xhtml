@@ -1,0 +1,242 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"     
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>SOFTFIT</title>
+        <f:event listener="#{prendaC.listar()}" type="preRenderView" />
+    </h:head>
+    <h:body>
+        <!-- Menubar -->
+        <h:form>
+            <p:menubar >
+                 <p:menuitem value="Vendedor" outcome="Vendedor" />
+                <p:menuitem value="Prendas" outcome="Prendas"/> 
+                <p:menuitem value="Cliente" outcome="Cliente"/>
+                <p:menuitem value="Venta" outcome="Venta"/>
+               
+            </p:menubar>
+        </h:form>
+
+        <p:spacer height="0"/>  
+
+        <!-- Botón nuevo -->
+        <h:form>
+            <p:toolbar>
+                <p:toolbarGroup>
+                    <p:commandButton value="Nuevo" icon="pi pi-plus" 
+                                     update=":RegPre" oncomplete="PF('wdlgRegistro').show()"
+                                     styleClass="ui-button-success" style="margin-right: .5rem">
+                        <p:resetInput target=":RegPre"/>
+                    </p:commandButton>
+                </p:toolbarGroup>
+                <p:toolbarGroup>
+                    <center>
+                        <div>
+                            <p:commandButton value="Excel" icon="pi pi-file-excel" styleClass="p-mr-2 p-mb-2">
+                                <p:dataExporter type="xls" target=":frmTablaPre:tablaPre" fileName="ListaDeLasPrendas_XLS" pageOnly="true" />
+                            </p:commandButton>     
+                        </div>
+                    </center>
+                </p:toolbarGroup>
+            </p:toolbar>
+        </h:form>
+
+
+        <center>    
+            <p:growl showDetail="true" id="messages" >
+                <p:autoUpdate/> 
+            </p:growl>
+
+
+            <!--        Formulario del Prenda    >-->   
+            <p:dialog header="Registrar Prenda" widgetVar="wdlgRegistro" id="dlgRegistro">
+                <h:form id="RegPre">                 
+                    <p:panelGrid columns="2" >
+                        <p:outputLabel value="Nombre" />                    
+                        <p:inputText value="#{prendaC.prenda.nombre}" required="true">
+                        <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                        </p:inputText>
+
+                        <p:outputLabel value="Talla" />
+                        <p:inputText value="#{prendaC.prenda.talla}" required="true">
+                        <p:keyFilter regEx="/[A-Z_ ]/"/>
+                        </p:inputText>
+
+                        <p:outputLabel value="Precio" />  
+                        <p:inputText value="#{prendaC.prenda.precio}" required="true">
+                        <p:keyFilter regEx="/[0-9_._$_ ]/"/>
+                        </p:inputText>
+
+                        <p:outputLabel value="Stock" />  
+                        <p:inputText value="#{prendaC.prenda.stock}" required="true">
+                        <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/" />
+                        </p:inputText>
+
+                        <p:outputLabel value="Categoria" />  
+                        <p:inputText value="#{prendaC.prenda.categoria}" required="true">
+                        <p:keyFilter regEx="/[0-9_]/"/>
+                        </p:inputText>
+                        
+                        <p:outputLabel value="Color" />                    
+                        <p:inputText value="#{prendaC.prenda.color}" required="true">
+                        <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                        </p:inputText>
+                        
+                        <p:outputLabel value="Marca" />                    
+                        <p:inputText value="#{prendaC.prenda.marca}" required="true">
+                        <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                        </p:inputText>
+
+                        <p:commandButton id="btnRegistrar" value="Registrar" actionListener="#{prendaC.registrar()}"
+                                         update="RegPre :frmTablaPre:tablaPre"                                          
+                                         oncomplete="if(!args.validationFailed)PF('wdlgRegistro').hide();">
+                            <p:confirm header="Confirmación" message="¿Deseas Registar?" icon="ui-icon-alert"/>
+                            <p:resetInput target="RegPre"/>
+                        </p:commandButton>                 
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('wdlgRegistro').hide();" />
+                    </p:panelGrid>   
+                </h:form>
+            </p:dialog> 
+            <!--        Fin del Formulario Prenda    >-->
+
+
+
+            <p:spacer height="0"/>        
+
+            <!--        Listado de Prenda    >-->              
+            <h:form id="frmTablaPre">
+                <p:dataTable id="tablaPre" var="lista" value="#{prendaC.lstPrenda}"
+                             rows="10" widgetVar="tblPre"
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                             rowsPerPageTemplate="5,10,15,20,30,40">   
+                    <f:facet name="header">
+                         <center><h2>Listado de las Prendas</h2>
+                            <p:outputPanel>
+                                <h:outputText value="Buscar:"/>
+                                <h:inputText id="globalFilter" onkeyup="PF('tblPre').filter()" style="width:200px;height: 30px"/>
+                            </p:outputPanel>
+                        </center>
+
+                    </f:facet>
+                    
+                    <p:column headerText="Nombre" filterBy="#{lista.nombre}">
+                        <h:outputText value="#{lista.nombre}" />
+                    </p:column>
+                    <p:column headerText="Talla" filterBy="#{lista.talla}">
+                        <h:outputText value="#{lista.talla}" />
+                    </p:column>
+                    <p:column headerText="Precio" filterBy="#{lista.precio}">
+                        <h:outputText value="#{lista.precio}" />
+                    </p:column> 
+                    <p:column headerText="Cantidad" filterBy="#{lista.stock}">
+                        <h:outputText value="#{lista.stock}" />
+                    </p:column>
+                    <p:column headerText="Categoria" filterBy="#{lista.categoria}">
+                        <h:outputText value="#{lista.categoria}" />
+                    </p:column>
+                    <p:column headerText="Color" filterBy="#{lista.color}">
+                        <h:outputText value="#{lista.color}" />
+                    </p:column>
+                    <p:column headerText="Marca" filterBy="#{lista.marca}">
+                        <h:outputText value="#{lista.marca}" />
+                    </p:column>
+                        
+                        <!---<f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('wdlgDatos').filter()" styleClass="custom-filter">
+                                <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{lista.estado}" />
+                            </p:selectOneMenu>
+                        </f:facet>-->
+                    
+                    <p:column style="width: 40px">
+                        <p:commandButton icon="pi pi-pencil"
+                                         oncomplete="PF('wdlgDatos').show();"
+                                         update=":frmModificar"
+                                         styleClass="edit-button rounded-button ui-button-success">
+                            <f:setPropertyActionListener value="#{lista}" target="#{prendaC.prenda}"/>
+                        </p:commandButton>
+                    </p:column>
+                    <p:column style="width: 40px">
+                        <p:commandButton styleClass="rounded-button ui-button-danger" icon="pi pi-trash" actionListener="#{prendaC.eliminar()}" update="tablaPre" >
+                            <p:confirm header="Confirmación" message="¿Desea Eliminar?" icon="ui-icon-alert"/>
+                            <p:tooltip trackMouse="true"/>
+                        </p:commandButton>
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi-pi-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi-pi-close"/>
+                        </p:confirmDialog>
+                    </p:column>
+                    <f:facet name="footer">
+                        EN TOTAL HAY #{fn:length(prendaC.lstPrenda)} REGISTROS.
+                    </f:facet>
+                </p:dataTable> 
+
+            </h:form>
+            <!--        Fin del Listado Prenda    >-->  
+
+
+            <!--        Dialogo Prenda    >-->
+            <p:dialog header="Datos de la Prenda" widgetVar="wdlgDatos" id="dlgDatos">
+                <h:form id="frmModificar">
+                    <p:panelGrid columns="2" >
+                        <p:outputLabel value="Nombre" />
+                        <p:inputText value="#{prendaC.prenda.nombre}" >
+                        <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                        </p:inputText>
+
+                        <p:outputLabel value="Talla" />
+                        <p:inputText value="#{prendaC.prenda.talla}" >
+                        <p:keyFilter regEx="/[A-Z_ ]/"/>
+                        </p:inputText>   
+
+                        <p:outputLabel value="Precio" />
+                        <p:inputText value="#{prendaC.prenda.precio}" >
+                         <p:keyFilter regEx="/[0-9_._$_ ]/"/>
+                           </p:inputText>   
+
+                        <p:outputLabel value="Stock" />
+                        <p:inputText value="#{prendaC.prenda.stock}" >
+                            <p:keyFilter regEx="/[0-9_]/" />
+                        </p:inputText>
+
+                        <p:outputLabel value="Categoria" />
+                        <p:inputText value="#{prendaC.prenda.categoria}" >
+                         <p:keyFilter regEx="/[0-9_]/"/>
+                         </p:inputText>   
+                        
+                        <p:outputLabel value="Color" />
+                        <p:inputText value="#{prendaC.prenda.color}" >
+                         <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                        </p:inputText>   
+                        
+                        <p:outputLabel value="Marca" />
+                        <p:inputText value="#{prendaC.prenda.marca}" >
+                         <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                          </p:inputText>   
+
+                        <p:commandButton id="btnModificar" value="Modificar" actionListener="#{prendaC.modificar()}" 
+                                         update="frmModificar :frmTablaPre:tablaPre" 
+                                         oncomplete="if(!args.validationFailed)PF('wdlgDatos').hide();">
+                            <p:confirm header="Confirmación" message="¿Deseas Modificar?" icon="ui-icon-alert"/>
+                        </p:commandButton>  
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('wdlgDatos').hide();" />
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+                        </p:confirmDialog>
+                    </p:panelGrid> 
+                </h:form>
+
+            </p:dialog>
+            <!--        Fin del Dialogo Prenda    >-->
+
+        </center>
+    </h:body>
+</html>

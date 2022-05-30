@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"     
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>SOFTFIT</title>
+
+    </h:head>
+    <h:body>
+        <!-- Menubar -->
+        <h:form>
+            <p:menubar>
+                <p:menuitem value="Vendedor" outcome="Vendedor" />
+                <p:menuitem value="Prendas" outcome="Prendas"/>  
+                <p:menuitem value="Cliente" outcome="Cliente"/>
+                <p:menuitem value="Venta" outcome="Venta"/>
+              
+            </p:menubar>
+        </h:form>
+
+        <p:spacer height="0"/>  
+
+        <!--        <div class="card">
+                    <h:form>
+                        <p:panel id="panel" header="Datos del cliente"  >
+                            <h:panelGrid columns="10" styleClass="showcase-text-align-center">
+                                <p:outputLabel for="text1" value="ID"/>
+                                <p:inputText id="text1" style="width:50px"/>
+                                <p:commandButton icon="pi pi-search" style="margin-right: 15px"></p:commandButton>
+        
+        
+                                <p:outputLabel for="text2" value="Nombre"/>
+                                <p:inputText id="text2" disabled="true" style="margin-right: 15px"/>
+        
+                                <p:outputLabel for="text3" value="Apellidos"/>
+                                <p:inputText id="text3" disabled="true" style="margin-right: 15px"/>
+        
+                                <p:outputLabel for="text4" value="DNI"/>
+                                <p:inputText id="text4" disabled="true" style="margin-right: 15px"/>
+                            </h:panelGrid>
+                        </p:panel>
+        
+                        <p:spacer height="0"/>  
+        
+                        <p:panel id="panel2" header="Datos de la prenda" styleClass="p-mb-3" >
+                            <h:panelGrid columns="11" styleClass="showcase-text-align-center" >
+                                <p:outputLabel for="idprenda" value="ID"/>
+                                <p:inputText id="idprenda" style="width:50px" />
+                                <p:commandButton icon="pi pi-search" style="margin-right: 15px"></p:commandButton>
+        
+                                <p:outputLabel for="nompre" value="Nombre"/>
+                                <p:inputText id="nompre" disabled="true" style="margin-right: 15px"/>
+        
+                                <p:outputLabel for="tallapre" value="Talla"/>
+                                <p:inputText id="tallapre" disabled="true" style="margin-right: 15px"/>
+        
+                                <p:outputLabel for="precio" value="Precio"/>
+                                <p:inputText id="precio" disabled="true" style="margin-right: 15px"/>
+        
+                                <p:outputLabel for="@next" value="Cantidad"/>
+                                <p:spinner id="number" value="0" style="width:90px; margin-right: 15px"/>
+        
+                                <p:outputLabel for="stock" value="Stock"/>
+                                <p:inputText id="stock" disabled="true" style="width:60px"/>
+                                <p:commandButton icon="pi pi-shopping-cart" value="Agregar prenda" style="alignment-adjust: "></p:commandButton>
+                            </h:panelGrid>
+                        </p:panel>
+                    </h:form>
+                </div>
+                <p:spacer height="0"/>        -->
+
+        <center>
+            <div>
+                <h:form id="RegVenta" >   
+                    <h2>VENTA</h2>               
+                    <p:panelGrid columns="4" >
+
+                        <p:outputLabel value="Nro. " style="font-weight: bold; color: orangered"/>  
+                        <p:outputLabel id="nroDoc" />
+                        <p:outputLabel value="Fecha" for="calendar" style="font-weight: bold; color: orangered"/>  
+                        <p:datePicker id="calendar" locale="es" monthNavigator="true" pattern="dd-MM-yyyy" style="font-weight: bold; color: deepskyblue;"/>
+
+                        <p:outputLabel value="DNI" />                    
+                        <p:inputText required="true" style="width:160px;">
+                            <p:keyFilter regEx="/[0-9]/"/>
+                            <p:commandButton icon="pi pi-search" />
+                        </p:inputText>
+
+                        <p:outputLabel value="Prenda" />
+                        <p:inputText required="true" style="width:160px;" >
+                            <p:keyFilter regEx="/[A-Z_a-z_ñ_á_é_í_ó_ú_ ]/"/>
+                            <p:commandButton icon="pi pi-search" />
+                        </p:inputText>
+
+                        <p:outputLabel value="Apellidos y Nombre" />
+                        <p:inputText  required="true" maxlength="9" >
+                        </p:inputText>
+
+                        <p:outputLabel value="Precio" />
+                        <p:inputText required="true" >
+                        </p:inputText>
+
+                        <p:outputLabel value="Dirección" />  
+                        <p:inputText  required="true">
+                        </p:inputText>
+
+                        <p:outputLabel value="Stock"/>
+                        <p:inputText  required="true">
+                        </p:inputText>
+
+                        <p:outputLabel value="Celular" />  
+                        <p:inputText  required="true">
+                        </p:inputText>
+
+                        <p:outputLabel value="Cantidad"/>
+                        <p:spinner id="cantpre" value="0" style="width:200px; margin-right: 15px"/>
+
+                        <p:commandButton value="Nuevo"  />
+                        <p:commandButton value="Agregar"   id="btnAgregar" />
+                    </p:panelGrid>   
+                </h:form>
+            </div>
+            <p:spacer height="0"/> 
+            <h:form>
+                <p:dataTable id="tablaVenta"  var="lista" widgetVar="tblVenta"> 
+                    <p:column headerText="ID Prenda"></p:column>
+                    <p:column headerText="Nombre"></p:column>
+                     <p:column headerText="Talla"></p:column>
+                    <p:column headerText="Categoria"></p:column>
+                    <p:column headerText="Precio"></p:column>
+                    <p:column headerText="Cantidad"></p:column>
+                    <p:column headerText="SubTotal s/"></p:column>
+                    <p:column style="width:35px">
+                        <p:rowEditor />
+                    </p:column> 
+                    <p:column style="width: 40px">
+                        <p:commandButton styleClass="rounded-button ui-button-danger" icon="pi pi-trash"  update="tablaVenta" >
+                            <p:confirm header="Confirmación" message="¿Desea Eliminar?" icon="ui-icon-alert"/>
+                            <p:tooltip trackMouse="true"/>
+                        </p:commandButton>
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi-pi-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi-pi-close"/>
+                        </p:confirmDialog>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:commandButton value="Registrar" id="btnRegistrarV" />
+                <p:outputLabel value="Total S/ "/>
+                <p:outputLabel  id="monto"/>   
+                <br/>
+            </h:form>
+        </center>
+    </h:body>
+</html>
